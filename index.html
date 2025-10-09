@@ -59,11 +59,13 @@
 
         /* Header Styles */
         header {
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 50%, #ffb3ba 100%);
             padding: 4rem 0;
-            text-align: center;
             position: relative;
             overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
         }
 
         header::before {
@@ -74,28 +76,74 @@
             right: 0;
             bottom: 0;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
+            opacity: 0.2;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 50%;
         }
 
         .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem);
             font-weight: 700;
             color: white;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+            line-height: 1.1;
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 0;
+        }
+
+        .hero-title .greeting {
+            font-size: 0.7em;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.2em;
+        }
+
+        .hero-title .name {
+            font-size: 1em;
+            font-weight: 700;
+            display: block;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 50%;
+        }
+
+        .headshot {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .headshot:hover {
+            transform: scale(1.05);
         }
 
         .subtitle {
             font-size: clamp(1rem, 2vw, 1.25rem);
             color: rgba(255, 255, 255, 0.9);
             font-weight: 400;
-            position: relative;
-            z-index: 1;
-            max-width: 600px;
-            margin: 0 auto;
+            margin-top: 1rem;
+            max-width: 400px;
         }
 
         /* Main Content */
@@ -307,6 +355,32 @@
             
             header {
                 padding: 3rem 0;
+                min-height: 400px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+            
+            .hero-text {
+                max-width: 100%;
+                order: 2;
+            }
+            
+            .hero-image {
+                max-width: 100%;
+                order: 1;
+            }
+            
+            .headshot {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .hero-title {
+                font-size: clamp(2.5rem, 8vw, 4rem);
             }
             
             main {
@@ -397,8 +471,18 @@
 <body>
     <div class="container">
         <header>
-            <h1 class="hero-title">Hi I'm Gargee</h1>
-            <p class="subtitle">Equity Research Analyst & Financial Professional</p>
+            <div class="header-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <span class="greeting">Hi,</span>
+                        <span class="name">I'm Gargee!</span>
+                    </h1>
+                    <p class="subtitle">Equity Research Analyst & Financial Professional</p>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face" alt="Gargee Piplani" class="headshot">
+                </div>
+            </div>
         </header>
 
         <main>
