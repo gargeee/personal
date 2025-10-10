@@ -52,9 +52,9 @@
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         /* Header Styles */
@@ -86,6 +86,9 @@
             width: 100%;
             position: relative;
             z-index: 1;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .hero-text {
@@ -154,12 +157,14 @@
         main {
             background: var(--background-primary);
             border-radius: 24px;
-            padding: 3rem;
+            padding: 3rem 2rem;
             margin: -2rem auto 2rem;
             box-shadow: var(--shadow-xl);
             position: relative;
             z-index: 2;
             border: 1px solid var(--border-color);
+            max-width: 1400px;
+            width: calc(100% - 4rem);
         }
 
         .section {
@@ -291,11 +296,15 @@
         .contact-section {
             background: var(--gradient-primary);
             border-radius: 20px;
-            padding: 3rem;
+            padding: 3rem 2rem;
             text-align: center;
             margin-top: 3rem;
             position: relative;
             overflow: hidden;
+            max-width: 1400px;
+            width: calc(100% - 4rem);
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .contact-section::before {
@@ -353,7 +362,7 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .container {
+            .header-content {
                 padding: 0 1rem;
             }
             
@@ -388,9 +397,10 @@
             }
             
             main {
-                padding: 2rem 1.5rem;
+                padding: 2rem 1rem;
                 margin: -1.5rem auto 1rem;
                 border-radius: 16px;
+                width: calc(100% - 2rem);
             }
             
             .section {
@@ -408,8 +418,9 @@
             }
             
             .contact-section {
-                padding: 2rem 1.5rem;
+                padding: 2rem 1rem;
                 margin-top: 2rem;
+                width: calc(100% - 2rem);
             }
         }
 
