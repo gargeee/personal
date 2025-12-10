@@ -431,6 +431,10 @@
             .timeline-divider {
                 display: none;
             }
+
+            .timeline-item::before {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -490,18 +494,39 @@
         .timeline-column {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 3rem;
         }
 
         .timeline-item {
             position: relative;
         }
 
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #ec4899;
+            z-index: 3;
+            top: 1.5rem;
+        }
+
+        .timeline-column:first-child .timeline-item::before {
+            right: calc(-1rem - 8px);
+        }
+
+        .timeline-column:last-child .timeline-item::before {
+            left: calc(-1rem - 8px);
+        }
+
         .timeline-content {
             background: var(--background-primary);
             padding: 1.5rem;
-            border-radius: 12px;
-            border: 2px solid #ec4899;
+            border-radius: 8px;
+            border: 2px solid #fce7f3;
             transition: all 0.3s ease;
         }
 
@@ -511,38 +536,37 @@
         }
 
         .timeline-period {
-            font-size: 1rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: #ec4899;
             margin-bottom: 0.75rem;
-        }
-
-        .timeline-company-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .timeline-company-name.barclays {
-            color: #00aeef;
+        .timeline-company-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+            color: #ec4899;
         }
 
         .timeline-company-name.piper {
-            color: #6b7280;
+            color: var(--text-primary);
         }
 
         .timeline-company-separator {
             display: inline-block;
             width: 1px;
             height: 1em;
-            background: #6b7280;
+            background: var(--text-primary);
             margin: 0 0.5rem;
             vertical-align: middle;
         }
 
         .timeline-company-name.kopernicus {
-            color: #00aeef;
+            color: #ec4899;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -563,14 +587,22 @@
 
         .timeline-location {
             font-size: 0.9rem;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .timeline-location::before {
+            content: '📍';
+            font-size: 0.9rem;
         }
 
         .timeline-coverage {
             font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-style: italic;
+            color: var(--text-primary);
+            margin-top: 0.5rem;
         }
 
         /* Print Styles */
@@ -619,15 +651,15 @@
                     <div class="timeline-column">
                         <div class="timeline-item">
                             <div class="timeline-content">
-                                <div class="timeline-period">Incoming:</div>
-                                <div class="timeline-company-name barclays">BARCLAYS</div>
+                                <div class="timeline-period">Incoming Incoming</div>
+                                <div class="timeline-company-name">BARCLAYS</div>
                                 <div class="timeline-role">Equity Research Analyst</div>
                                 <div class="timeline-location">New York, NY</div>
                             </div>
                         </div>
                         <div class="timeline-item">
                             <div class="timeline-content">
-                                <div class="timeline-period">Summer 2024:</div>
+                                <div class="timeline-period">Summer 2024</div>
                                 <div class="timeline-company-name piper">PIPER<span class="timeline-company-separator"></span>SANDLER</div>
                                 <div class="timeline-role">Equity Research Analyst</div>
                                 <div class="timeline-location">Portland, OR</div>
@@ -639,8 +671,8 @@
                     <div class="timeline-column">
                         <div class="timeline-item">
                             <div class="timeline-content">
-                                <div class="timeline-period">Summer 2025:</div>
-                                <div class="timeline-company-name barclays">BARCLAYS</div>
+                                <div class="timeline-period">Summer 2025</div>
+                                <div class="timeline-company-name">BARCLAYS</div>
                                 <div class="timeline-role">Equity Research Analyst</div>
                                 <div class="timeline-location">New York, NY</div>
                                 <div class="timeline-coverage">Coverage: U.S. Multi-Industrials</div>
@@ -648,7 +680,7 @@
                         </div>
                         <div class="timeline-item">
                             <div class="timeline-content">
-                                <div class="timeline-period">Summer 2023:</div>
+                                <div class="timeline-period">Summer 2023</div>
                                 <div class="timeline-company-name kopernicus">kopernicus</div>
                                 <div class="timeline-role">Data Engineering Intern</div>
                                 <div class="timeline-location">Palo Alto, CA</div>
