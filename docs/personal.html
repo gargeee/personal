@@ -22,24 +22,14 @@
         </div>
     </nav>
 
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="hero-text">
-                    <h1 class="hero-title">
-                        <span class="name">Hi,</span>
-                        <span class="name">I'm Gargee!</span>
-                    </h1>
-                </div>
-                <div class="hero-image">
-                    <img src="headshot.png" alt="Gargee Piplani" class="headshot">
-                </div>
-            </div>
-        </header>
+    <div class="container no-hero">
 
         <main>
-            <div class="tab-placeholder">
-                <p>Personal coming soon.</p>
+            <div class="section">
+                <h2 class="section-title">Travel</h2>
+                <div class="map-wrap">
+                    <div id="world-map" class="world-map" role="img" aria-label="Map of the world"></div>
+                </div>
             </div>
         </main>
 
@@ -67,5 +57,251 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script>
+        (function () {
+            var container = document.getElementById('world-map');
+            if (!container || typeof d3 === 'undefined') return;
+
+            var width = container.clientWidth || 900;
+            var height = Math.round(width * 0.52);
+
+            var svg = d3.select(container).append('svg')
+                .attr('viewBox', '0 0 ' + width + ' ' + height)
+                .attr('preserveAspectRatio', 'xMidYMid meet');
+
+            var projection = d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' });
+            var path = d3.geoPath(projection);
+
+            // India's small outlying island territories, excluded from the state layer for a cleaner map.
+            var indiaIslandsToDrop = ['Andaman and Nicobar Islands', 'Lakshadweep'];
+
+            Promise.all([
+                d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json'),
+                d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json'),
+                d3.json('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/india.geojson'),
+                d3.json('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/canada.geojson')
+            ]).then(function (results) {
+                var world = results[0], usStates = results[1], indiaStates = results[2], canadaProvinces = results[3];
+
+                // Exclude Antarctica, the USA, and Canada — their outlines are drawn below from the
+                // same source as their state/province layers instead, so the borders line up exactly
+                // (mixing datasets of different detail levels made lake shorelines near Wisconsin/Michigan
+                // look jagged and doubled).
+                // Drop tiny outlying islands from each country's shape so multi-island nations
+                // (e.g. Denmark, the Philippines) read as cleaner shapes instead of scattered dots.
+                // A country made up entirely of small islands (e.g. Maldives) is left untouched.
+                var MIN_ISLAND_AREA_KM2 = 500;
+                function dropTinyIslands(feature) {
+                    if (feature.geometry.type !== 'MultiPolygon') return feature;
+                    var kept = feature.geometry.coordinates.filter(function (coords) {
+                        return turf.area(turf.polygon(coords)) / 1e6 >= MIN_ISLAND_AREA_KM2;
+                    });
+                    if (kept.length === 0) return feature;
+                    return {
+                        type: 'Feature',
+                        id: feature.id,
+                        properties: feature.properties,
+                        geometry: { type: 'MultiPolygon', coordinates: kept }
+                    };
+                }
+
+                var countries = topojson.feature(world, world.objects.countries).features
+                    .filter(function (d) { return d.id !== '010' && d.properties.name !== 'Antarctica'; })
+                    .filter(function (d) { return d.id !== '840' && d.id !== '124'; })
+                    // Kiribati's territory is scattered atolls, including the Line Islands south of Hawaii —
+                    // excluded entirely rather than thinned, since every part of it is a tiny island.
+                    .filter(function (d) { return d.properties.name !== 'Kiribati'; })
+                    .map(dropTinyIslands);
+                var usFeatures = topojson.feature(usStates, usStates.objects.states).features;
+                var usNation = topojson.feature(usStates, usStates.objects.nation).features[0];
+
+                var indiaFeatures = indiaStates.features.filter(function (d) { return indiaIslandsToDrop.indexOf(d.properties.name) === -1; });
+
+                var canadaFeatures = canadaProvinces.features;
+                // turf.union's ring winding isn't always what d3-geo expects, which made the
+                // merged shape render as its inverse (filling the whole sphere) — rewind fixes it.
+                var canadaNation = turf.rewind(
+                    canadaFeatures.reduce(function (acc, f) { return turf.union(acc, f); }),
+                    { reverse: true }
+                );
+
+                var visitedStates = [
+                    'Alaska', 'Hawaii', 'California', 'Oregon', 'Washington', 'Nevada', 'Arizona',
+                    'Texas', 'Michigan', 'Ohio', 'Illinois', 'Florida', 'Kentucky', 'Virginia',
+                    'Maryland', 'New York', 'Pennsylvania', 'New Jersey', 'Colorado',
+                    'North Carolina', 'West Virginia'
+                ];
+                var visitedProvinces = ['British Columbia', 'Alberta', 'Quebec'];
+                var visitedIndiaStates = ['Maharashtra', 'Rajasthan', 'Uttar Pradesh', 'Jammu and Kashmir', 'Goa'];
+                var visitedCountries = [
+                    'Mexico', 'Costa Rica', 'Iceland', 'United Kingdom', 'Portugal', 'Spain', 'France',
+                    'Andorra', 'Switzerland', 'Germany', 'Italy', 'Austria', 'Luxembourg', 'Turkey',
+                    'United Arab Emirates', 'Maldives', 'Singapore', 'South Korea', 'Ireland'
+                ];
+
+                // France's shaded shape excludes French Guiana (South America) — the outline layer
+                // above still draws it, it's just not highlighted as visited.
+                function withoutFrenchGuiana(feature) {
+                    if (feature.properties.name !== 'France' || feature.geometry.type !== 'MultiPolygon') return feature;
+                    var kept = feature.geometry.coordinates.filter(function (coords) {
+                        var c = turf.centroid(turf.polygon(coords)).geometry.coordinates;
+                        var isFrenchGuiana = c[0] < -45 && c[1] > -5 && c[1] < 10;
+                        return !isFrenchGuiana;
+                    });
+                    return {
+                        type: 'Feature',
+                        id: feature.id,
+                        properties: feature.properties,
+                        geometry: { type: 'MultiPolygon', coordinates: kept }
+                    };
+                }
+
+                // Shaded visited countries.
+                var visitedCountrySel = svg.append('g')
+                    .selectAll('path')
+                    .data(countries.filter(function (d) { return visitedCountries.indexOf(d.properties.name) !== -1; }).map(withoutFrenchGuiana))
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', function (d) { return d.properties.name === 'Portugal' ? 'visited-state visited-portugal' : 'visited-state'; })
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+
+                // Portugal: hovering shows a preview card (photo, title, subtitle) for the Substack post;
+                // clicking either the country itself or the card opens the post.
+                var portugalPostUrl = 'https://gargeep.substack.com/p/portugal?r=540lp&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true';
+                var tooltip = d3.select(container).append('div').attr('class', 'map-tooltip');
+                var tooltipLink = tooltip.append('a')
+                    .attr('href', portugalPostUrl)
+                    .attr('target', '_blank')
+                    .attr('rel', 'noopener noreferrer');
+                tooltipLink.append('img')
+                    .attr('src', 'https://substackcdn.com/image/fetch/$s_!UBpG!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0c94dab0-9479-4360-b60b-0e8d7edbc0f7_4284x5712.heic')
+                    .attr('alt', 'Portugal');
+                var tooltipText = tooltipLink.append('div').attr('class', 'map-tooltip-text');
+                tooltipText.append('div').attr('class', 'map-tooltip-title').text('Portugal');
+                tooltipText.append('div').attr('class', 'map-tooltip-subtitle').text('Lisbon, Sintra, Cascais, Porto');
+
+                var tooltipWidth = 300, tooltipHeight = 215;
+                var hideTooltipTimer;
+                function showTooltip() {
+                    clearTimeout(hideTooltipTimer);
+                    tooltip.classed('visible', true);
+                }
+                function scheduleHideTooltip() {
+                    hideTooltipTimer = setTimeout(function () { tooltip.classed('visible', false); }, 200);
+                }
+
+                svg.selectAll('path.visited-portugal')
+                    .on('click', function () {
+                        window.open(portugalPostUrl, '_blank', 'noopener,noreferrer');
+                    })
+                    .on('mouseenter', showTooltip)
+                    .on('mousemove', function (event) {
+                        var rect = container.getBoundingClientRect();
+                        var x = event.clientX - rect.left + 14;
+                        var y = event.clientY - rect.top + 14;
+                        if (x + tooltipWidth > rect.width) x = event.clientX - rect.left - tooltipWidth - 14;
+                        if (y + tooltipHeight > rect.height) y = event.clientY - rect.top - tooltipHeight - 14;
+                        tooltip
+                            .style('left', Math.max(4, x) + 'px')
+                            .style('top', Math.max(4, y) + 'px');
+                    })
+                    .on('mouseleave', scheduleHideTooltip);
+
+                tooltip
+                    .on('mouseenter', showTooltip)
+                    .on('mouseleave', scheduleHideTooltip);
+
+                // Shaded visited states, drawn first (fill only) so the outline strokes stay crisp on top.
+                svg.append('g')
+                    .selectAll('path')
+                    .data(usFeatures.filter(function (d) { return visitedStates.indexOf(d.properties.name) !== -1; }))
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', 'visited-state')
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+
+                // Shaded visited Canadian provinces.
+                svg.append('g')
+                    .selectAll('path')
+                    .data(canadaFeatures.filter(function (d) { return visitedProvinces.indexOf(d.properties.name) !== -1; }))
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', 'visited-state')
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+
+                // Shaded visited Indian states.
+                svg.append('g')
+                    .selectAll('path')
+                    .data(indiaFeatures.filter(function (d) { return visitedIndiaStates.indexOf(d.properties.name) !== -1; }))
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', 'visited-state')
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+
+                // Draw every country's national outline.
+                svg.append('g')
+                    .selectAll('path')
+                    .data(countries)
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', 'country')
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+
+                // USA national outline (includes Alaska/Hawaii), from the same topology as the state mesh.
+                svg.append('path')
+                    .datum(usNation)
+                    .attr('d', path)
+                    .attr('class', 'country')
+                    .append('title')
+                    .text('United States of America');
+
+                // Internal US state lines, drawn as a single shared mesh so borders between
+                // neighboring states aren't double-stroked (which was making them look uneven).
+                var usStateBorders = topojson.mesh(usStates, usStates.objects.states, function (a, b) { return a !== b; });
+                svg.append('path')
+                    .datum(usStateBorders)
+                    .attr('d', path)
+                    .attr('class', 'subdivision');
+
+                // Canada national outline, built by dissolving its provinces together so it's an
+                // exact match for the province borders below (same source data, no dataset mismatch).
+                svg.append('path')
+                    .datum(canadaNation)
+                    .attr('d', path)
+                    .attr('class', 'country country-canada')
+                    .append('title')
+                    .text('Canada');
+
+                // Canadian province lines.
+                svg.append('g')
+                    .selectAll('path')
+                    .data(canadaFeatures)
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', 'subdivision')
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+
+                // Indian state lines.
+                svg.append('g')
+                    .selectAll('path')
+                    .data(indiaFeatures)
+                    .join('path')
+                    .attr('d', path)
+                    .attr('class', 'subdivision')
+                    .append('title')
+                    .text(function (d) { return d.properties.name; });
+            });
+        })();
+    </script>
 </body>
 </html>
