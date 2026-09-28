@@ -160,46 +160,64 @@
                     };
                 }
 
+                // Countries with a linked Substack post: hovering shows a preview card (photo, title,
+                // subtitle); clicking either the country itself or the card opens the post.
+                var travelPosts = {
+                    'Portugal': {
+                        url: 'https://gargeep.substack.com/p/portugal?r=540lp&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true',
+                        image: 'https://substackcdn.com/image/fetch/$s_!UBpG!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0c94dab0-9479-4360-b60b-0e8d7edbc0f7_4284x5712.heic',
+                        subtitle: 'Lisbon, Sintra, Cascais, Porto'
+                    },
+                    'Spain': {
+                        url: 'https://gargeep.substack.com/p/spain?r=540lp&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true',
+                        image: 'https://substackcdn.com/image/fetch/$s_!nPO0!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7a22f91a-1333-4294-af36-f6efe207705a_4284x5712.heic',
+                        subtitle: 'Barcelona, Ibiza, Madrid, Segovia/Toledo, Mallorca'
+                    }
+                };
+                function linkedPostClass(name) {
+                    return travelPosts[name] ? 'visited-state visited-linked' : 'visited-state';
+                }
+
                 // Shaded visited countries.
                 var visitedCountrySel = svg.append('g')
                     .selectAll('path')
                     .data(countries.filter(function (d) { return visitedCountries.indexOf(d.properties.name) !== -1; }).map(withoutFrenchGuiana))
                     .join('path')
                     .attr('d', path)
-                    .attr('class', function (d) { return d.properties.name === 'Portugal' ? 'visited-state visited-portugal' : 'visited-state'; })
+                    .attr('class', function (d) { return linkedPostClass(d.properties.name); })
                     .append('title')
                     .text(function (d) { return d.properties.name; });
 
-                // Portugal: hovering shows a preview card (photo, title, subtitle) for the Substack post;
-                // clicking either the country itself or the card opens the post.
-                var portugalPostUrl = 'https://gargeep.substack.com/p/portugal?r=540lp&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true';
                 var tooltip = d3.select(container).append('div').attr('class', 'map-tooltip');
                 var tooltipLink = tooltip.append('a')
-                    .attr('href', portugalPostUrl)
                     .attr('target', '_blank')
                     .attr('rel', 'noopener noreferrer');
-                tooltipLink.append('img')
-                    .attr('src', 'https://substackcdn.com/image/fetch/$s_!UBpG!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0c94dab0-9479-4360-b60b-0e8d7edbc0f7_4284x5712.heic')
-                    .attr('alt', 'Portugal');
+                var tooltipImg = tooltipLink.append('img');
                 var tooltipText = tooltipLink.append('div').attr('class', 'map-tooltip-text');
-                tooltipText.append('div').attr('class', 'map-tooltip-title').text('Portugal');
-                tooltipText.append('div').attr('class', 'map-tooltip-subtitle').text('Lisbon, Sintra, Cascais, Porto');
+                var tooltipTitle = tooltipText.append('div').attr('class', 'map-tooltip-title');
+                var tooltipSubtitle = tooltipText.append('div').attr('class', 'map-tooltip-subtitle');
 
                 var tooltipWidth = 300, tooltipHeight = 215;
                 var hideTooltipTimer;
-                function showTooltip() {
+                function showTooltip(post) {
                     clearTimeout(hideTooltipTimer);
+                    tooltipLink.attr('href', post.url);
+                    tooltipImg.attr('src', post.image).attr('alt', post.name);
+                    tooltipTitle.text(post.name);
+                    tooltipSubtitle.text(post.subtitle);
                     tooltip.classed('visible', true);
                 }
                 function scheduleHideTooltip() {
                     hideTooltipTimer = setTimeout(function () { tooltip.classed('visible', false); }, 200);
                 }
 
-                svg.selectAll('path.visited-portugal')
-                    .on('click', function () {
-                        window.open(portugalPostUrl, '_blank', 'noopener,noreferrer');
+                svg.selectAll('path.visited-linked')
+                    .on('click', function (event, d) {
+                        window.open(travelPosts[d.properties.name].url, '_blank', 'noopener,noreferrer');
                     })
-                    .on('mouseenter', showTooltip)
+                    .on('mouseenter', function (event, d) {
+                        showTooltip(Object.assign({ name: d.properties.name }, travelPosts[d.properties.name]));
+                    })
                     .on('mousemove', function (event) {
                         var rect = container.getBoundingClientRect();
                         var x = event.clientX - rect.left + 14;
@@ -213,7 +231,7 @@
                     .on('mouseleave', scheduleHideTooltip);
 
                 tooltip
-                    .on('mouseenter', showTooltip)
+                    .on('mouseenter', function () { clearTimeout(hideTooltipTimer); })
                     .on('mouseleave', scheduleHideTooltip);
 
                 // Shaded visited states, drawn first (fill only) so the outline strokes stay crisp on top.

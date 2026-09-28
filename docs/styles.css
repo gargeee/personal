@@ -51,7 +51,7 @@ header {
     padding: 4rem 0;
     position: relative;
     overflow: hidden;
-    min-height: 500px;
+    min-height: 100vh;
     display: flex;
     align-items: center;
 }
@@ -86,7 +86,7 @@ header::before {
 
 .hero-title {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(4rem, 8vw, 7rem);
+    font-size: clamp(5rem, 11vw, 10rem);
     font-weight: 800;
     color: white;
     line-height: 0.9;
@@ -203,24 +203,14 @@ header::before {
 /* Main Content */
 main {
     background: var(--background-primary);
-    border-radius: 24px;
     padding: 3rem 2rem;
-    margin: -2rem auto 2rem;
-    box-shadow: var(--shadow-xl);
-    position: relative;
-    z-index: 2;
-    border: 2px solid #fbcfe8;
-    max-width: 1400px;
-    width: calc(100% - 4rem);
+    margin: 0;
+    width: 100%;
 }
 
 /* Pages with no hero header still need clearance below the floating nav pills. */
 .no-hero {
     padding-top: 6rem;
-}
-
-.no-hero main {
-    margin-top: 0;
 }
 
 .section {
@@ -255,15 +245,9 @@ main {
 
 .intro-bubble {
     background: var(--background-primary);
-    border: 2px solid #fbcfe8;
-    border-radius: 40px;
     padding: 2.75rem 3rem;
-    box-shadow: var(--shadow-xl);
-    position: relative;
-    z-index: 2;
-    margin: -2rem auto 0;
-    max-width: 1400px;
-    width: calc(100% - 4rem);
+    margin: 0;
+    width: 100%;
 }
 
 .about-content {
@@ -278,6 +262,50 @@ main {
 
 .about-content p:last-child {
     margin-bottom: 0;
+}
+
+/* Projects */
+.project-list {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.project-item + .project-item {
+    margin-top: 0.75rem;
+}
+
+.project-item::marker {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.project-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.project-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.project-links {
+    display: flex;
+    gap: 12rem;
+}
+
+.project-link {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-decoration: underline;
 }
 
 /* Contact Section */
@@ -338,7 +366,7 @@ main {
 
     header {
         padding: 7.5rem 0 3rem;
-        min-height: 400px;
+        min-height: 100vh;
     }
 
     .header-content {
@@ -374,9 +402,8 @@ main {
 
     main {
         padding: 2rem 1rem;
-        margin: -1.5rem auto 1rem;
-        border-radius: 16px;
-        width: calc(100% - 2rem);
+        margin: 0;
+        width: 100%;
     }
 
     .no-hero {
@@ -402,9 +429,8 @@ main {
 
     .intro-bubble {
         padding: 2rem 1.5rem;
-        margin: -1.5rem auto 0;
-        border-radius: 28px;
-        width: calc(100% - 2rem);
+        margin: 0;
+        width: 100%;
     }
 
     .section {
@@ -489,7 +515,7 @@ main {
     bottom: 6px;
     left: 50%;
     width: 3px;
-    background: linear-gradient(180deg, #ec4899, #ffb3ba);
+    background: var(--accent-color);
     border-radius: 2px;
     transform: translateX(-50%);
 }
@@ -546,20 +572,13 @@ main {
     background: var(--background-primary);
     border-radius: 16px;
     padding: 1.5rem 1.75rem;
-    border: 1px solid #fce7f3;
+    border: 2px solid var(--accent-color);
     box-shadow: var(--shadow-sm);
     text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .timeline-entry.left .timeline-card {
     margin-left: auto;
-}
-
-.timeline-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: #ec4899;
 }
 
 .timeline-card-header {
@@ -589,7 +608,7 @@ main {
     font-size: 0.65rem;
     font-weight: 700;
     color: white;
-    background: var(--gradient-accent);
+    background: var(--accent-color);
     padding: 0.3rem 0.6rem;
     border-radius: 50px;
     text-transform: uppercase;
@@ -664,11 +683,13 @@ main {
 .world-map .visited-state {
     fill: var(--accent-color);
     fill-opacity: 0.35;
-    stroke: none;
+    stroke: white;
+    stroke-width: 0.5;
 }
 
-.world-map .visited-portugal {
+.world-map .visited-linked {
     fill-opacity: 0.9;
+    stroke-width: 1;
     cursor: pointer;
 }
 
