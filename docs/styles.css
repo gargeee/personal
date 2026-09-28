@@ -298,7 +298,7 @@ main {
 
 .project-links {
     display: flex;
-    gap: 6rem;
+    gap: 4.5rem;
 }
 
 .project-link {
