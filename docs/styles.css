@@ -202,7 +202,7 @@ header::before {
 
 /* Main Content */
 main {
-    background: var(--background-primary);
+    background: transparent;
     padding: 3rem 2rem;
     margin: 0;
     width: 100%;
@@ -226,7 +226,8 @@ main {
     font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: var(--text-primary);
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     margin-bottom: 2rem;
     position: relative;
     display: inline-block;
@@ -239,12 +240,12 @@ main {
     left: 0;
     width: 60px;
     height: 4px;
-    background: var(--gradient-accent);
+    background: white;
     border-radius: 2px;
 }
 
 .intro-bubble {
-    background: var(--background-primary);
+    background: transparent;
     padding: 2.75rem 3rem;
     margin: 0;
     width: 100%;
@@ -253,7 +254,7 @@ main {
 .about-content {
     font-size: 1.125rem;
     line-height: 1.8;
-    color: var(--text-primary);
+    color: white;
 }
 
 .about-content p {
@@ -278,10 +279,8 @@ main {
     font-size: 1.9rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    background: var(--gradient-accent);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -296,7 +295,7 @@ main {
     left: 0;
     width: 36px;
     height: 4px;
-    background: var(--gradient-accent);
+    background: white;
     border-radius: 2px;
 }
 
@@ -314,7 +313,7 @@ main {
     font-family: 'Inter', sans-serif;
     font-size: 1.05rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: white;
 }
 
 .project-line {
@@ -328,7 +327,7 @@ main {
 .project-title {
     font-size: 1.05rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: white;
 }
 
 .project-links {
@@ -339,7 +338,7 @@ main {
 .project-link {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--accent-color);
+    color: white;
     text-decoration: underline;
 }
 
@@ -550,7 +549,7 @@ main {
     bottom: 6px;
     left: 50%;
     width: 3px;
-    background: var(--accent-color);
+    background: white;
     border-radius: 2px;
     transform: translateX(-50%);
 }
@@ -604,11 +603,10 @@ main {
     display: inline-block;
     width: 100%;
     max-width: 380px;
-    background: var(--background-primary);
+    background: transparent;
     border-radius: 16px;
     padding: 1.5rem 1.75rem;
-    border: 2px solid var(--accent-color);
-    box-shadow: var(--shadow-sm);
+    border: 2px solid white;
     text-align: left;
 }
 
@@ -644,6 +642,7 @@ main {
     font-weight: 700;
     color: white;
     background: var(--accent-color);
+    border: 1.5px solid white;
     padding: 0.3rem 0.6rem;
     border-radius: 50px;
     text-transform: uppercase;
@@ -654,13 +653,13 @@ main {
 .timeline-role {
     font-size: 1.05rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: white;
     margin-bottom: 0.4rem;
 }
 
 .timeline-location {
     font-size: 0.875rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.85);
     margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
@@ -674,10 +673,10 @@ main {
 
 .timeline-coverage {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.85);
     margin-top: 0.6rem;
     padding-top: 0.6rem;
-    border-top: 1px dashed var(--border-color);
+    border-top: 1px dashed rgba(255, 255, 255, 0.4);
 }
 
 /* Travel Map */
@@ -699,7 +698,7 @@ main {
 
 .world-map .country {
     fill: none;
-    stroke: var(--accent-color);
+    stroke: white;
     stroke-width: 0.75;
 }
 
@@ -710,15 +709,15 @@ main {
 
 .world-map .subdivision {
     fill: none;
-    stroke: var(--accent-color);
+    stroke: white;
     stroke-width: 0.35;
     stroke-opacity: 0.45;
 }
 
 .world-map .visited-state {
-    fill: var(--accent-color);
-    fill-opacity: 0.35;
-    stroke: white;
+    fill: white;
+    fill-opacity: 0.85;
+    stroke: var(--accent-color);
     stroke-width: 0.5;
 }
 
