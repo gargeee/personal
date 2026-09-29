@@ -275,9 +275,38 @@ main {
 
 .project-subsection-title {
     font-family: 'Inter', sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.9rem;
     font-weight: 800;
-    color: var(--accent-color);
+    letter-spacing: -0.02em;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    padding-bottom: 0.6rem;
+}
+
+.project-subsection-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 36px;
+    height: 4px;
+    background: var(--gradient-accent);
+    border-radius: 2px;
+}
+
+.project-subsection-icon {
+    font-size: 1.5rem;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: initial;
 }
 
 .project-list {
