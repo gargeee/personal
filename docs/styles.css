@@ -300,15 +300,6 @@ main {
     border-radius: 2px;
 }
 
-.project-subsection-icon {
-    font-size: 1.5rem;
-    -webkit-background-clip: initial;
-    background-clip: initial;
-    background: none;
-    -webkit-text-fill-color: initial;
-    color: initial;
-}
-
 .project-list {
     list-style: decimal;
     padding-left: 1.5rem;
