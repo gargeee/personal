@@ -25,7 +25,18 @@
     <div class="container no-hero">
 
         <main>
-            <div class="section">
+            <div class="currently">
+                <button type="button" class="currently-toggle" id="currently-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="currently-menu">
+                    Currently&hellip;<span class="currently-caret" aria-hidden="true">&#9662;</span>
+                </button>
+                <ul class="currently-menu" id="currently-menu" role="menu" hidden>
+                    <li role="none">
+                        <a role="menuitem" href="#travel" class="currently-item" data-highlight-country="Ireland">Planning a trip to Ireland</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" id="travel">
                 <h2 class="section-title">Travel</h2>
                 <div class="map-wrap">
                     <div id="world-map" class="world-map" role="img" aria-label="Map of the world"></div>
@@ -318,6 +329,56 @@
                     .attr('class', 'subdivision')
                     .append('title')
                     .text(function (d) { return d.properties.name; });
+            });
+        })();
+    </script>
+    <script>
+        (function () {
+            var toggle = document.getElementById('currently-toggle');
+            var menu = document.getElementById('currently-menu');
+            if (!toggle || !menu) return;
+
+            function setOpen(open) {
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                menu.hidden = !open;
+            }
+
+            // Pulse a country on the map once it has rendered (the map loads asynchronously).
+            function highlightCountry(name, attemptsLeft) {
+                var paths = document.querySelectorAll('#world-map .visited-state');
+                var target = null;
+                paths.forEach(function (p) {
+                    var t = p.querySelector('title');
+                    if (t && t.textContent === name) target = p;
+                });
+                if (!target) {
+                    if (attemptsLeft > 0) setTimeout(function () { highlightCountry(name, attemptsLeft - 1); }, 800);
+                    return;
+                }
+                target.classList.remove('map-pulse');
+                void target.getBoundingClientRect();
+                target.classList.add('map-pulse');
+                target.addEventListener('animationend', function () {
+                    target.classList.remove('map-pulse');
+                }, { once: true });
+            }
+
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setOpen(menu.hidden);
+            });
+
+            menu.addEventListener('click', function (e) {
+                var link = e.target.closest('.currently-item');
+                if (!link) return;
+                setOpen(false);
+                var country = link.getAttribute('data-highlight-country');
+                if (country) setTimeout(function () { highlightCountry(country, 6); }, 500);
+            });
+
+            document.addEventListener('click', function () { setOpen(false); });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { setOpen(false); toggle.focus(); }
             });
         })();
     </script>

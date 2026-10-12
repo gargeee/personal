@@ -680,6 +680,89 @@ main {
     border-top: 1px dashed var(--border-color);
 }
 
+/* "Currently..." dropdown */
+.currently {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 3rem;
+}
+
+.currently-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0 0.6rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--accent-color);
+    position: relative;
+}
+
+.currently-toggle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 36px;
+    height: 4px;
+    background: var(--gradient-accent);
+    border-radius: 2px;
+}
+
+.currently-caret {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.currently-toggle[aria-expanded="true"] .currently-caret {
+    transform: rotate(180deg);
+}
+
+.currently-toggle:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+.currently-menu {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    z-index: 20;
+    min-width: 280px;
+    list-style: none;
+    padding: 0.4rem;
+    background: var(--background-primary);
+    border: 2px solid var(--accent-color);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+}
+
+.currently-menu[hidden] {
+    display: none;
+}
+
+.currently-item {
+    display: block;
+    padding: 0.65rem 0.9rem;
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.currently-item:hover,
+.currently-item:focus-visible {
+    background: #fdf2f8;
+    color: var(--accent-color);
+    outline: none;
+}
+
 /* Travel Map */
 .map-wrap {
     width: 100%;
@@ -726,6 +809,23 @@ main {
     fill-opacity: 0.9;
     stroke-width: 1;
     cursor: pointer;
+}
+
+@keyframes mapPulse {
+    0%, 100% {
+        stroke: white;
+        stroke-width: 0.5;
+        fill-opacity: 0.35;
+    }
+    50% {
+        stroke: var(--accent-color);
+        stroke-width: 4;
+        fill-opacity: 1;
+    }
+}
+
+.world-map .map-pulse {
+    animation: mapPulse 0.9s ease-in-out 3;
 }
 
 .map-tooltip {
