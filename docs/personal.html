@@ -391,15 +391,9 @@
                 e.preventDefault();
                 setOpen(false);
                 showTravel();
-                history.replaceState(null, '', '#travel');
                 var country = link.getAttribute('data-highlight-country');
                 if (country) setTimeout(function () { highlightCountry(country, 20); }, 500);
             });
-
-            if (location.hash === '#travel') {
-                showTravel();
-                setTimeout(function () { highlightCountry('Ireland', 20); }, 500);
-            }
 
             document.addEventListener('click', function () { setOpen(false); });
             document.addEventListener('keydown', function (e) {
