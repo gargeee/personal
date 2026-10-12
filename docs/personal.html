@@ -31,12 +31,12 @@
                 </button>
                 <ul class="currently-menu" id="currently-menu" role="menu" hidden>
                     <li role="none">
-                        <a role="menuitem" href="#travel" class="currently-item" data-highlight-country="Ireland">Planning a trip to Ireland</a>
+                        <a role="menuitem" href="#travel" class="currently-item" data-highlight-country="Ireland">Planning a trip to Ireland<svg class="currently-plane" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></a>
                     </li>
                 </ul>
             </div>
 
-            <div class="section" id="travel">
+            <div class="section" id="travel" hidden>
                 <h2 class="section-title">Travel</h2>
                 <div class="map-wrap">
                     <div id="world-map" class="world-map" role="img" aria-label="Map of the world"></div>
@@ -73,7 +73,13 @@
     <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
     <script>
-        (function () {
+        // The Travel map is only built the first time the section is revealed (see the
+        // "Currently..." dropdown below), so it can measure its real container width.
+        var travelMapStarted = false;
+        window.initTravelMap = function () {
+            if (travelMapStarted) return;
+            travelMapStarted = true;
+
             var container = document.getElementById('world-map');
             if (!container || typeof d3 === 'undefined') return;
 
@@ -330,7 +336,7 @@
                     .append('title')
                     .text(function (d) { return d.properties.name; });
             });
-        })();
+        };
     </script>
     <script>
         (function () {
@@ -368,13 +374,32 @@
                 setOpen(menu.hidden);
             });
 
+            // The Travel section stays hidden until it's chosen from the dropdown.
+            function showTravel() {
+                var travel = document.getElementById('travel');
+                if (!travel) return;
+                travel.hidden = false;
+                if (window.initTravelMap) window.initTravelMap();
+                requestAnimationFrame(function () {
+                    travel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+
             menu.addEventListener('click', function (e) {
                 var link = e.target.closest('.currently-item');
                 if (!link) return;
+                e.preventDefault();
                 setOpen(false);
+                showTravel();
+                history.replaceState(null, '', '#travel');
                 var country = link.getAttribute('data-highlight-country');
-                if (country) setTimeout(function () { highlightCountry(country, 6); }, 500);
+                if (country) setTimeout(function () { highlightCountry(country, 20); }, 500);
             });
+
+            if (location.hash === '#travel') {
+                showTravel();
+                setTimeout(function () { highlightCountry('Ireland', 20); }, 500);
+            }
 
             document.addEventListener('click', function () { setOpen(false); });
             document.addEventListener('keydown', function (e) {

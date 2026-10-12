@@ -763,6 +763,19 @@ main {
     outline: none;
 }
 
+.currently-plane {
+    width: 1.1em;
+    height: 1.1em;
+    margin-left: 0.45rem;
+    vertical-align: -0.2em;
+    fill: var(--accent-color);
+    transform: rotate(45deg);
+}
+
+#travel[hidden] {
+    display: none;
+}
+
 /* Travel Map */
 .map-wrap {
     width: 100%;
